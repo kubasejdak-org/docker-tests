@@ -1,6 +1,10 @@
 name: Build tests-sbc Docker images
 
-on: [push]
+on:
+  push:
+  schedule:
+    - cron: "0 10 * * SAT"
+  workflow_dispatch:
 
 env:
   IMAGE_NAME: tests-sbc
