@@ -56,16 +56,13 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${C
     \
     # Install python3 and pipx.
     apt install -y python3 python3-pip python3-venv python-is-python3 python3-dev && \
-    pip install -U pip && \
-    mkdir -p ${PIPX_HOME} && \
-    mkdir -p ${PIPX_BIN_DIR} && \
-    chmod -R 777 ${PIPX_HOME} && \
-    chmod -R 777 ${PIPX_BIN_DIR} && \
+    pip config set global.break-system-packages true && \
+    mkdir -p -m 777 ${PIPX_HOME} && \
+    mkdir -p -m 777 ${PIPX_BIN_DIR} && \
     pip install pipx && \
     \
     # Install conan.
-    mkdir -p ${CONAN_USER_HOME} && \
-    chmod -R 777 ${CONAN_USER_HOME} && \
+    mkdir -p -m 777 ${CONAN_USER_HOME} && \
     pipx install conan==${CONAN_VERSION} && \
     conan profile new default --detect && \
     conan profile update settings.compiler.libcxx=libstdc++11 default && \
@@ -76,13 +73,11 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${C
     ln -s ${CONAN_USER_HOME}/.conan ${HOME}/.conan && \
     \
     # Install labgrid.
-    pip3 install cryptography==3.4.6 && \
-    pip3 install --ignore-installed idna && \
-    pipx install labgrid==${LABGRID_VERSION} --system-site-packages && \
+    pipx install labgrid==${LABGRID_VERSION} && \
     \
     # Install pyserial and python-daemon.
-    pip3 install pyserial==${PYSERIAL_VERSION} && \
-    pip3 install python-daemon==${PYTHON_DAEMON_VERSION} && \
+    pip install pyserial==${PYSERIAL_VERSION} && \
+    pip install python-daemon==${PYTHON_DAEMON_VERSION} && \
     \
     # Install CMake.
     wget --no-check-certificate ${CMAKE_URL} && \

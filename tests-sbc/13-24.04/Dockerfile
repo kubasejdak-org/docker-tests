@@ -73,9 +73,6 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${C
     ln -s ${CONAN_USER_HOME}/.conan ${HOME}/.conan && \
     \
     # Install labgrid.
-    # pip install cryptography==3.4.6 && \
-    # pip install --ignore-installed idna && \
-    # pipx install labgrid==${LABGRID_VERSION} --system-site-packages && \
     pipx install labgrid==${LABGRID_VERSION} && \
     \
     # Install pyserial and python-daemon.
