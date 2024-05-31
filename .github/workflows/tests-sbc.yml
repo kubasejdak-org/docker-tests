@@ -13,6 +13,7 @@ jobs:
   build:
     name: build tests-sbc
     runs-on: [self-hosted, heavy-build]
+    needs: []
     strategy:
       fail-fast: false
       matrix:
@@ -27,7 +28,7 @@ jobs:
           platform: linux/arm64
           workdir: ${{ env.IMAGE_NAME }}/${{ matrix.IMAGE_TAG }}
 
-  build-all:
+  check-all:
     runs-on: [self-hosted, heavy-build]
     needs: build
     steps:
@@ -37,7 +38,7 @@ jobs:
     name: deploy tests-sbc
     runs-on: [self-hosted, heavy-build]
     if: github.ref_name == 'main'
-    needs: build-all
+    needs: check-all
     strategy:
       matrix:
         IMAGE_TAG: [11-22.04, 13-24.04]
