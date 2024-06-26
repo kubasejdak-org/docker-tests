@@ -96,6 +96,9 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${C
     rm -rf valgrind-${VALGRIND_VERSION} && \
     apt install -y libc6-dbg && \
     \
+    # Install openocd.
+    apt install -y openocd && \
+    \
     # Install libfaketime.
     git clone ${LIBFAKETIME_URL} && \
     cd libfaketime && \
