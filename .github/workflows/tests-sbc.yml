@@ -3,7 +3,7 @@ name: Build tests-sbc Docker images
 on:
   push:
   schedule:
-    - cron: "0 10 * * SAT"
+    - cron: "0 5 * * SAT"
   workflow_dispatch:
 
 env:
