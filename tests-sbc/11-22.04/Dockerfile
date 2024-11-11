@@ -2,30 +2,33 @@ FROM ubuntu:22.04
 LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 
 # Settings.
-ARG CMAKE_VERSION=3.30.0
-ARG CONAN_VERSION=1.64.1
+ARG CMAKE_VERSION=3.31.0
+ARG CONAN_VERSION=2.9.2
 ARG GCC_VERSION=11
-ARG LABGRID_VERSION=23.0.6
+ARG LABGRID_VERSION=24.0.2
 ARG PYSERIAL_VERSION=3.5
-ARG PYTHON_DAEMON_VERSION=3.0.1
-ARG VALGRIND_VERSION=3.23.0
+ARG PYTHON_DAEMON_VERSION=3.1.0
+ARG VALGRIND_VERSION=3.24.0
 ARG CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-aarch64.sh
 ARG CONAN_TARGET_PROFILE=gcc-${GCC_VERSION}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG LIBFAKETIME_URL=https://github.com/wolfcw/libfaketime.git
 ARG VALGRIND_URL=https://sourceware.org/pub/valgrind/valgrind-${VALGRIND_VERSION}.tar.bz2
 
-ENV CONAN_USER_HOME=/opt/conan
+ENV CONAN_HOME=/opt/conan/.conan2
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 ENV PIPX_HOME=/opt/pipx
 ENV PIPX_BIN_DIR=${PIPX_HOME}/bin
-ENV PATH=${PIPX_BIN_DIR}:${PATH}
+ENV PATH=${PIPX_BIN_DIR}:${PATH}:/root/.local/bin
+ENV TZ=Europe/Warsaw
 
 # Prepare APT for installing packages.
-RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${CONTAINER_TIMEZONE} > /etc/timezone && \
+RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     echo "APT::Install-Recommends \"false\";" >> /etc/apt/apt.conf && \
     echo "APT::Install-Suggests \"false\";" >> /etc/apt/apt.conf && \
     apt update && \
     apt upgrade -y && \
+    apt install -y tzdata && \
     \
     # Create common project directories.
     mkdir -p -m 777 /var/log/ks && \
@@ -62,18 +65,15 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${C
     pip install pipx && \
     \
     # Install conan.
-    mkdir -p -m 777 ${CONAN_USER_HOME} && \
+    mkdir -p -m 777 ${CONAN_HOME} && \
     pipx install conan==${CONAN_VERSION} && \
-    conan profile new default --detect && \
-    conan profile update settings.compiler.libcxx=libstdc++11 default && \
-    conan profile update env.CC=gcc default && \
-    conan profile update env.CXX=g++ default && \
+    conan profile detect && \
     ln -s $(which conan) /usr/bin/conan && \
-    chmod -R 777 ${CONAN_USER_HOME} && \
-    ln -s ${CONAN_USER_HOME}/.conan ${HOME}/.conan && \
+    chmod -R 777 ${CONAN_HOME} && \
     \
     # Install labgrid.
-    pipx install labgrid==${LABGRID_VERSION} && \
+    pipx install labgrid==${LABGRID_VERSION} --system-site-packages && \
+    labgrid-client && \
     \
     # Install pyserial and python-daemon.
     pip install pyserial==${PYSERIAL_VERSION} && \
@@ -114,5 +114,5 @@ RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${C
     rm -rf /var/lib/apt/lists/*
 
 # Add conan profile.
-COPY ${CONAN_TARGET_PROFILE} ${CONAN_USER_HOME}/.conan/profiles
-RUN ln -sf ${CONAN_USER_HOME}/.conan/profiles/${CONAN_TARGET_PROFILE} ${CONAN_USER_HOME}/.conan/profiles/target-default
+COPY ${CONAN_TARGET_PROFILE} ${CONAN_HOME}/profiles
+RUN ln -sf ${CONAN_HOME}/profiles/${CONAN_TARGET_PROFILE} ${CONAN_HOME}/profiles/target-default

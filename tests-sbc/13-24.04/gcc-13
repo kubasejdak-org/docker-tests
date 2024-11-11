@@ -1,14 +1,13 @@
-13[settings]
-os=Linux
-os_build=Linux
-arch=armv7
-arch_build=armv7
-compiler=gcc
-compiler.version=13
-compiler.libcxx=libstdc++11
+[settings]
+arch=armv8
 build_type=Release
+compiler=gcc
+compiler.cppstd=gnu17
+compiler.libcxx=libstdc++11
+compiler.version=13
+os=Linux
 
-[env]
+[buildenv]
 AR=gcc-ar-13
 AS=gcc-13
 CC=gcc-13
