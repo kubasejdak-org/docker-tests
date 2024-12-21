@@ -3,11 +3,9 @@ LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 
 # Settings.
 ARG CMAKE_VERSION=3.31.0
-ARG CONAN_VERSION=2.9.2
+ARG CONAN_VERSION=2.10.2
 ARG GCC_VERSION=11
 ARG LABGRID_VERSION=24.0.2
-ARG PYSERIAL_VERSION=3.5
-ARG PYTHON_DAEMON_VERSION=3.1.0
 ARG CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-aarch64.sh
 ARG CONAN_TARGET_PROFILE=gcc-${GCC_VERSION}
 ARG DEBIAN_FRONTEND=noninteractive
