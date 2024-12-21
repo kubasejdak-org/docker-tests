@@ -3,11 +3,9 @@ LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 
 # Settings.
 ARG CMAKE_VERSION=3.31.0
-ARG CONAN_VERSION=2.9.2
+ARG CONAN_VERSION=2.10.2
 ARG GCC_VERSION=13
 ARG LABGRID_VERSION=24.0.2
-ARG PYSERIAL_VERSION=3.5
-ARG PYTHON_DAEMON_VERSION=3.1.0
 ARG CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-aarch64.sh
 ARG CONAN_TARGET_PROFILE=gcc-${GCC_VERSION}
 ARG DEBIAN_FRONTEND=noninteractive
@@ -31,29 +29,16 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     # Create common project directories.
     mkdir -p -m 777 /var/log/ks && \
     \
+    # Install git and SSH client.
+    apt install -y git openssh-client && \
+    git config --system --add safe.directory '*' && \
+    \
     # Install common tools and libs.
     apt install -y bzip2 wget file sudo iproute2 lsof build-essential make libssl-dev libffi-dev libgpiod-dev \
     libiio-dev libsocketcan-dev gpiod spi-tools i2c-tools can-utils && \
     \
-    # Install git and SSH client.
-    apt install -y software-properties-common gnupg && \
-    add-apt-repository ppa:git-core/ppa && \
-    apt install -y git openssh-client && \
-    git config --system --add safe.directory '*' && \
-    \
-    # Install gcc, g++ and lcov.
-    add-apt-repository ppa:ubuntu-toolchain-r/test && \
-    apt update && \
-    apt install -y gcc-${GCC_VERSION} g++-${GCC_VERSION} gdb lcov && \
-    update-alternatives --install /usr/bin/gcc-ar   gcc-ar      /usr/bin/aarch64-linux-gnu-gcc-ar-${GCC_VERSION} 10 && \
-    update-alternatives --install /usr/bin/gcc      gcc         /usr/bin/aarch64-linux-gnu-gcc-${GCC_VERSION} 10 && \
-    update-alternatives --install /usr/bin/g++      g++         /usr/bin/aarch64-linux-gnu-g++-${GCC_VERSION} 10 && \
-    update-alternatives --install /usr/bin/ld       ld          /usr/bin/aarch64-linux-gnu-ld 10 && \
-    update-alternatives --install /usr/bin/objcopy  objcopy     /usr/bin/aarch64-linux-gnu-objcopy 10 && \
-    update-alternatives --install /usr/bin/ranlib   ranlib      /usr/bin/aarch64-linux-gnu-ranlib 10 && \
-    update-alternatives --install /usr/bin/size     size        /usr/bin/aarch64-linux-gnu-size 10 && \
-    update-alternatives --install /usr/bin/strip    strip       /usr/bin/aarch64-linux-gnu-strip 10 && \
-    update-alternatives --install /usr/bin/gcov     gcov        /usr/bin/aarch64-linux-gnu-gcov-${GCC_VERSION} 10 && \
+    # Install gcc, g++, gdb and lcov.
+    apt install -y gcc gcc-${GCC_VERSION} g++ g++-${GCC_VERSION} gdb lcov && \
     \
     # Install python3 and pipx.
     apt install -y python3 python3-pip python3-venv python-is-python3 python3-dev && \
@@ -74,8 +59,7 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     labgrid-client && \
     \
     # Install pyserial and python-daemon.
-    pip install pyserial==${PYSERIAL_VERSION} && \
-    pip install python-daemon==${PYTHON_DAEMON_VERSION} && \
+    apt install -y python3-serial python3-daemon && \
     \
     # Install CMake.
     wget --no-check-certificate ${CMAKE_URL} && \
