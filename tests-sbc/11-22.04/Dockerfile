@@ -8,12 +8,10 @@ ARG GCC_VERSION=11
 ARG LABGRID_VERSION=24.0.2
 ARG PYSERIAL_VERSION=3.5
 ARG PYTHON_DAEMON_VERSION=3.1.0
-ARG VALGRIND_VERSION=3.24.0
 ARG CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-aarch64.sh
 ARG CONAN_TARGET_PROFILE=gcc-${GCC_VERSION}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG LIBFAKETIME_URL=https://github.com/wolfcw/libfaketime.git
-ARG VALGRIND_URL=https://sourceware.org/pub/valgrind/valgrind-${VALGRIND_VERSION}.tar.bz2
 
 ENV CONAN_HOME=/opt/conan/.conan2
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
@@ -84,17 +82,8 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     sudo sh $(basename ${CMAKE_URL}) --skip-license --prefix=/usr && \
     rm $(basename ${CMAKE_URL}); \
     \
-    # Compile valgrind and install libc6-dbg.
-    wget --no-check-certificate ${VALGRIND_URL} && \
-    tar -xf $(basename ${VALGRIND_URL}) && \
-    cd valgrind-${VALGRIND_VERSION} && \
-    ./configure && \
-    make -j$(nproc) && \
-    make install && \
-    cd - && \
-    rm $(basename ${VALGRIND_URL}) && \
-    rm -rf valgrind-${VALGRIND_VERSION} && \
-    apt install -y libc6-dbg && \
+    # Install valgrind.
+    apt install -y valgrind && \
     \
     # Install openocd.
     apt install -y openocd && \
