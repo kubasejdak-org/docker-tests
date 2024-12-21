@@ -61,8 +61,7 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     labgrid-client && \
     \
     # Install pyserial and python-daemon.
-    pip install pyserial==${PYSERIAL_VERSION} && \
-    pip install python-daemon==${PYTHON_DAEMON_VERSION} && \
+    apt install -y python3-serial python3-daemon && \
     \
     # Install CMake.
     wget --no-check-certificate ${CMAKE_URL} && \
