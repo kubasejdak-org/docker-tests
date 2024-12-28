@@ -34,8 +34,8 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     git config --system --add safe.directory '*' && \
     \
     # Install common tools and libs.
-    apt install -y bzip2 wget file sudo iproute2 lsof build-essential make libssl-dev libffi-dev libgpiod-dev \
-    libiio-dev libsocketcan-dev gpiod spi-tools i2c-tools can-utils && \
+    apt install -y ca-certificates bzip2 wget file sudo iproute2 lsof build-essential make libssl-dev libffi-dev \
+    libgpiod-dev libiio-dev libsocketcan-dev gpiod spi-tools i2c-tools can-utils && \
     \
     # Install gcc, g++, gdb and lcov.
     apt install -y gcc gcc-${GCC_VERSION} g++ g++-${GCC_VERSION} gdb lcov && \
@@ -81,7 +81,6 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     rm -rf libfaketime && \
     \
     # Cleanup image.
-    apt remove -y software-properties-common gnupg && \
     apt autoremove -y && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
