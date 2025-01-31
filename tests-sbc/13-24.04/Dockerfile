@@ -3,7 +3,7 @@ LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 
 # Settings.
 ARG CMAKE_VERSION=3.31.0
-ARG CONAN_VERSION=2.10.2
+ARG CONAN_VERSION=2.12.1
 ARG GCC_VERSION=13
 ARG LABGRID_VERSION=24.0.2
 ARG CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-aarch64.sh
