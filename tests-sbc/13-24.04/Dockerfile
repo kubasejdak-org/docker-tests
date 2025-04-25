@@ -2,16 +2,11 @@ FROM ubuntu:24.04
 LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 
 # Settings.
-ARG CMAKE_VERSION=3.31.6
-ARG CONAN_VERSION=2.14.0
 ARG GCC_VERSION=13
 ARG LABGRID_VERSION=24.0.2
-ARG CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-aarch64.sh
-ARG CONAN_TARGET_PROFILE=gcc-${GCC_VERSION}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG LIBFAKETIME_URL=https://github.com/wolfcw/libfaketime.git
 
-ENV CONAN_HOME=/opt/conan/.conan2
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 ENV PIPX_HOME=/opt/pipx
 ENV PIPX_BIN_DIR=${PIPX_HOME}/bin
@@ -47,24 +42,12 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     mkdir -p -m 777 ${PIPX_BIN_DIR} && \
     pip install pipx && \
     \
-    # Install conan.
-    mkdir -p -m 777 ${CONAN_HOME} && \
-    pipx install conan==${CONAN_VERSION} && \
-    conan profile detect && \
-    ln -s $(which conan) /usr/bin/conan && \
-    chmod -R 777 ${CONAN_HOME} && \
-    \
     # Install labgrid.
     pipx install labgrid==${LABGRID_VERSION} --system-site-packages && \
     labgrid-client && \
     \
     # Install pyserial and python-daemon.
     apt install -y python3-serial python3-daemon && \
-    \
-    # Install CMake.
-    wget --no-check-certificate ${CMAKE_URL} && \
-    sudo sh $(basename ${CMAKE_URL}) --skip-license --prefix=/usr && \
-    rm $(basename ${CMAKE_URL}); \
     \
     # Install valgrind.
     apt install -y valgrind && \
@@ -84,7 +67,3 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     apt autoremove -y && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Add conan profile.
-COPY ${CONAN_TARGET_PROFILE} ${CONAN_HOME}/profiles
-RUN ln -sf ${CONAN_HOME}/profiles/${CONAN_TARGET_PROFILE} ${CONAN_HOME}/profiles/target-default
