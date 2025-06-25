@@ -29,7 +29,7 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     git config --system --add safe.directory '*' && \
     \
     # Install common tools and libs.
-    apt install -y ca-certificates bzip2 wget file sudo iproute2 lsof build-essential make libssl-dev libffi-dev \
+    apt install -y ca-certificates bzip2 wget curl file sudo iproute2 lsof build-essential make libssl-dev libffi-dev \
     libgpiod-dev libiio-dev libsocketcan-dev gpiod spi-tools i2c-tools can-utils && \
     \
     # Install gcc, g++, gdb and lcov.
