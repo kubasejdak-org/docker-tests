@@ -3,15 +3,15 @@ LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 
 # Settings.
 ARG GCC_VERSION=13
-ARG LABGRID_VERSION=24.0.2
+ARG LABGRID_VERSION=25.0
 ARG DEBIAN_FRONTEND=noninteractive
 ARG LIBFAKETIME_URL=https://github.com/wolfcw/libfaketime.git
 
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
-ENV PIPX_HOME=/opt/pipx
-ENV PIPX_BIN_DIR=${PIPX_HOME}/bin
-ENV PATH=${PIPX_BIN_DIR}:${PATH}:/root/.local/bin
 ENV TZ=Europe/Warsaw
+ENV UV_INSTALL_DIR=/usr/local/bin
+ENV UV_TOOL_BIN_DIR=/usr/local/bin
+ENV UV_TOOL_DIR=/usr/local/share/uv/tools
 
 # Prepare APT for installing packages.
 RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
@@ -35,15 +35,16 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     # Install gcc, g++, gdb and lcov.
     apt install -y gcc gcc-${GCC_VERSION} g++ g++-${GCC_VERSION} gdb lcov && \
     \
-    # Install python3 and pipx.
+    # Install python3 and uv.
     apt install -y python3 python3-pip python3-venv python-is-python3 python3-dev && \
     pip config set global.break-system-packages true && \
-    mkdir -p -m 777 ${PIPX_HOME} && \
-    mkdir -p -m 777 ${PIPX_BIN_DIR} && \
-    pip install pipx && \
+    curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=${UV_INSTALL_DIR} sh && \
+    mkdir -p ${UV_TOOL_DIR} && \
+    echo "UV_TOOL_DIR=${UV_TOOL_DIR}" | tee -a /etc/environment && \
+    echo "UV_TOOL_BIN_DIR=${UV_TOOL_BIN_DIR}" | tee -a /etc/environment && \
     \
     # Install labgrid.
-    pipx install labgrid==${LABGRID_VERSION} --system-site-packages && \
+    uv tool install labgrid==${LABGRID_VERSION} && \
     labgrid-client && \
     \
     # Install pyserial and python-daemon.
