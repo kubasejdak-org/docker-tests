@@ -3,7 +3,7 @@ LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 
 # Settings.
 ARG GCC_VERSION=11
-ARG LABGRID_VERSION=25.0
+ARG LABGRID_VERSION=25.0.1
 ARG DEBIAN_FRONTEND=noninteractive
 ARG LIBFAKETIME_URL=https://github.com/wolfcw/libfaketime.git
 
