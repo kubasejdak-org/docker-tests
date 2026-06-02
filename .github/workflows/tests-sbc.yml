@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        IMAGE_TAG: [11-22.04, 13-24.04, 15-26.04]
+        IMAGE_TAG: [13-24.04, 15-26.04]
     steps:
       - uses: actions/checkout@v6
       - name: docker build
@@ -30,9 +30,11 @@ jobs:
 
   check-all:
     runs-on: [self-hosted, heavy-build]
+    if: always()
     needs: build
     steps:
-      - run: echo "Success"
+      - name: Check all jobs
+        run: '! echo ''${{ toJSON(needs.*.result) }}'' | grep -qE ''"(failure|cancelled|skipped)"'''
 
   deploy:
     name: deploy tests-sbc
@@ -41,7 +43,7 @@ jobs:
     needs: check-all
     strategy:
       matrix:
-        IMAGE_TAG: [11-22.04, 13-24.04, 15-26.04]
+        IMAGE_TAG: [13-24.04, 15-26.04]
     steps:
       - name: docker push
         uses: kubasejdak-org/docker-push-action@main
