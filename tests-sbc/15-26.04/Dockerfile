@@ -59,7 +59,7 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     # Install libfaketime.
     git clone ${LIBFAKETIME_URL} && \
     cd libfaketime && \
-    FAKETIME_COMPILE_CFLAGS="-DFAKE_SETTIME" make -j$(nproc) && \
+    FAKETIME_COMPILE_CFLAGS="-DFAKE_SETTIME " make -j$(nproc) && \
     make install && \
     cd - && \
     rm -rf libfaketime && \
