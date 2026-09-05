@@ -4,7 +4,7 @@ LABEL maintainer="Kuba Sejdak (kuba.sejdak@gmail.com)"
 # Settings.
 ARG GCC_VERSION=15
 ARG LABGRID_VERSION=26.0
-ARG LIBFAKETIME_VERSION=0.9.12
+ARG LIBFAKETIME_VERSION=c93dda71f7201d7fb78c2c64e24cf5143c65ef39
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
@@ -57,8 +57,9 @@ RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
     apt install -y openocd && \
     \
     # Install libfaketime.
-    git clone --depth 1 https://github.com/wolfcw/libfaketime.git -b v${LIBFAKETIME_VERSION} && \
+    git clone https://github.com/wolfcw/libfaketime.git && \
     cd libfaketime && \
+    git checkout ${LIBFAKETIME_VERSION} && \
     FAKETIME_COMPILE_CFLAGS="-DFAKE_SETTIME" make -j$(nproc) && \
     make install && \
     cd - && \
